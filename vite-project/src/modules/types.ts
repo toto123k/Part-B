@@ -5,6 +5,6 @@ export interface Employee {
   title: string;
   country: string;
   city: string;
-  birthDate: string; // Consider using Date type if you parse it, or a specific date string format
+  birthDate: string; 
   imageUrl: string;
 }
