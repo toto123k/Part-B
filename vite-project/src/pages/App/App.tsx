@@ -4,6 +4,7 @@ import EmployeeCard from "../../Components/EmplyoeeCard/EmployeeCard";
 import { fetchAllEmployees } from "../../axios/api/employeeService";
 import type { Employee } from "../../modules/types";
 import EmployeeModal from "../../Components/EmployeeModal/EmployeeModal";
+import EmployeeMap from "../../Components/EmployeeMap/EmployeeMap";
 
 function App() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -111,6 +112,8 @@ function App() {
           employeeToShow={selectedEmployee}
         />
       )}
+
+      <EmployeeMap employees={employees}></EmployeeMap>
     </>
   );
 }
