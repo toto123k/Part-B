@@ -3,11 +3,16 @@ import { Box, Typography } from "@mui/material";
 import EmployeeCard from "../../Components/EmplyoeeCard/EmployeeCard";
 import { fetchAllEmployees } from "../../axios/api/employeeService";
 import type { Employee } from "../../modules/types";
+import EmployeeModal from "../../Components/EmployeeModal/EmployeeModal";
 
 function App() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
+    null
+  );
 
   useEffect(() => {
     const getEmployees = async () => {
@@ -28,6 +33,16 @@ function App() {
     };
     getEmployees();
   }, []);
+
+  const handleOpenModal = (employee: Employee) => {
+    setSelectedEmployee(employee);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedEmployee(null); // Clear selected employee when closing
+  };
 
   if (loading) {
     return (
@@ -84,10 +99,18 @@ function App() {
               lastName={employee.lastName}
               title={employee.title}
               imageUrl={employee.imageUrl || "assets/jake.jpg"}
+              onAboutMeClick={() => handleOpenModal(employee)}
             />
           ))
         )}
       </Box>
+      {selectedEmployee && (
+        <EmployeeModal
+          handleClose={handleCloseModal}
+          open={isModalOpen}
+          employeeToShow={selectedEmployee}
+        />
+      )}
     </>
   );
 }

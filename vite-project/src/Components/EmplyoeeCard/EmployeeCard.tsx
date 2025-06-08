@@ -8,6 +8,7 @@ interface EmployeeCardProps {
   title: string;
   city: string;
   country: string;
+  onAboutMeClick: () => void;
 }
 
 function EmployeeCard({
@@ -17,6 +18,7 @@ function EmployeeCard({
   title,
   city,
   country,
+  onAboutMeClick,
 }: EmployeeCardProps) {
   return (
     <>
@@ -31,7 +33,11 @@ function EmployeeCard({
         <h3>{`${firstName} ${lastName}`}</h3>
         <Typography sx={{ color: "gray" }}>{title}</Typography>
         <Typography sx={{ color: "gray" }}>{`${city}, ${country}`}</Typography>
-        <Button variant="contained" sx={{ margin: "2rem" }}>
+        <Button
+          variant="contained"
+          sx={{ margin: "2rem" }}
+          onClick={onAboutMeClick}
+        >
           About Me
         </Button>
       </div>
