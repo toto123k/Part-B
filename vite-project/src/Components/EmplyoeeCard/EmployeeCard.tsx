@@ -1,3 +1,4 @@
+import ProfilePicture from "../ProfilePicture/ProfilePicture";
 import "./EmployeeCard.css";
 import { Box, Typography, Button } from "@mui/material";
 
@@ -23,13 +24,7 @@ function EmployeeCard({
   return (
     <>
       <div className="card">
-        <div className="logo">
-          <img
-            src={imageUrl}
-            className="logo"
-            alt={`${firstName} ${lastName}'s profile`}
-          />
-        </div>
+        <ProfilePicture imageUrl={imageUrl} />
         <h3>{`${firstName} ${lastName}`}</h3>
         <Typography sx={{ color: "gray" }}>{title}</Typography>
         <Typography sx={{ color: "gray" }}>{`${city}, ${country}`}</Typography>

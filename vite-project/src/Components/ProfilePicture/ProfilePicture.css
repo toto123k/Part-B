@@ -1,0 +1,8 @@
+.logo {
+  height: 5.5em;
+  width: 5.5em;
+
+  will-change: filter;
+  transition: filter 300ms;
+  border-radius: 80px;
+}
