@@ -1,10 +1,10 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Box } from "@mui/material";
-import type { Employee, GroupedEmployees } from "../../modules/types"; // Ensure Employee type is correctly imported
+import type { Employee, GroupedEmployees } from "../../modules/types";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState, useMemo } from "react";
 import L from "leaflet";
-import { calculateAge } from "../../modules/employee"; // Import calculateAge
+import { calculateAge } from "../../modules/employee"; 
 
 interface EmployeeMapProps {
   employees: Employee[];
@@ -154,17 +154,16 @@ function getInitialMapCenter(
       return [latitude, longitude];
     }
   }
-  return [0, 0]; // Default to center of the world if no locations are found
+  return [0, 0]; 
 }
 
 function EmployeeMap({ employees }: EmployeeMapProps) {
   const API_NINJAS_API_KEY = "09CE2n85ib4gM6jB63HDOQ==5Xd52LR3dYw458MQ";
   const geocodedMapData = useEmployeeLocations(employees, API_NINJAS_API_KEY);
 
-  // Determines the initial map center based on available geocoded data.
   const initialMapCenter: [number, number] =
     getInitialMapCenter(geocodedMapData);
-    
+
   return (
     <Box
       sx={{

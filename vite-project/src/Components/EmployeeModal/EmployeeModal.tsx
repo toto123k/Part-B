@@ -14,12 +14,12 @@ const style = {
   position: "absolute",
   left: "50%",
   transform: "translate(-50%, 0%)",
-  width: "85%", // Increased width for better space utilization on smaller screens
+  width: "85%", 
   maxWidth: "50rem",
-  height: "auto", // Let height adjust to content, combined with maxHeight
-  maxHeight: "90vh", // Use viewport height for max height
-  overflowY: "auto", // Allow vertical scrolling if content exceeds maxHeight
-  overflowX: "hidden", // Explicitly hide horizontal overflow
+  height: "auto", 
+  maxHeight: "90vh",
+  overflowY: "auto", 
+  overflowX: "hidden", 
   boxShadow: 24,
   p: 4,
   display: "flex",
