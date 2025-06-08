@@ -1,10 +1,10 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import type { Employee, GroupedEmployees } from "../../modules/types";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState, useMemo } from "react";
 import L from "leaflet";
-import { calculateAge } from "../../modules/employee"; 
+import { calculateAge } from "../../modules/employee";
 
 interface EmployeeMapProps {
   employees: Employee[];
@@ -102,11 +102,14 @@ async function fetchGeocodedLocation(
  */
 function useEmployeeLocations(employees: Employee[], apiKey: string) {
   const [geocodedMapData, setGeocodedMapData] = useState<GeocodedMapData>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const processEmployeeLocations = async () => {
+      setIsLoading(true);
       if (employees.length === 0) {
         setGeocodedMapData({});
+        setIsLoading(false);
         return;
       }
 
@@ -133,12 +136,13 @@ function useEmployeeLocations(employees: Employee[], apiKey: string) {
         }
       }
       setGeocodedMapData(newGeocodedMapData);
+      setIsLoading(false);
     };
 
     processEmployeeLocations();
   }, [employees]);
 
-  return geocodedMapData;
+  return { geocodedMapData, isLoading };
 }
 
 function getInitialMapCenter(
@@ -154,12 +158,15 @@ function getInitialMapCenter(
       return [latitude, longitude];
     }
   }
-  return [0, 0]; 
+  return [0, 0];
 }
 
 function EmployeeMap({ employees }: EmployeeMapProps) {
   const API_NINJAS_API_KEY = "09CE2n85ib4gM6jB63HDOQ==5Xd52LR3dYw458MQ";
-  const geocodedMapData = useEmployeeLocations(employees, API_NINJAS_API_KEY);
+  const { geocodedMapData, isLoading } = useEmployeeLocations(
+    employees,
+    API_NINJAS_API_KEY
+  );
 
   const initialMapCenter: [number, number] =
     getInitialMapCenter(geocodedMapData);
@@ -172,45 +179,54 @@ function EmployeeMap({ employees }: EmployeeMapProps) {
         maxWidth: "100rem",
         margin: "20px auto",
         overflow: "hidden",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      <MapContainer
-        center={initialMapCenter}
-        zoom={2}
-        scrollWheelZoom={true}
-        style={{ height: "100%", width: "100%" }}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+      {isLoading ? (
+        <Typography variant="h5" color="text.secondary">
+          Loading team map...
+        </Typography>
+      ) : (
+        <MapContainer
+          center={initialMapCenter}
+          zoom={2}
+          scrollWheelZoom={true}
+          style={{ height: "100%", width: "100%" }}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
 
-        {Object.values(geocodedMapData).map((countryData) =>
-          Object.values(countryData).map((locationData, index) => (
-            <Marker
-              key={`${locationData.latitude}-${locationData.longitude}-${index}`}
-              position={[locationData.latitude, locationData.longitude]}
-            >
-              <Popup>
-                <strong>
-                  {locationData.employees[0].city},{" "}
-                  {locationData.employees[0].country}
-                </strong>
-                <br />
-                Employees:
-                <ul>
-                  {locationData.employees.map((employee) => (
-                    <li key={employee.id}>
-                      {employee.firstName} {employee.lastName} (Age:{" "}
-                      {calculateAge(new Date(employee.birthDate))})
-                    </li>
-                  ))}
-                </ul>
-              </Popup>
-            </Marker>
-          ))
-        )}
-      </MapContainer>
+          {Object.values(geocodedMapData).map((countryData) =>
+            Object.values(countryData).map((locationData, index) => (
+              <Marker
+                key={`${locationData.latitude}-${locationData.longitude}-${index}`}
+                position={[locationData.latitude, locationData.longitude]}
+              >
+                <Popup>
+                  <strong>
+                    {locationData.employees[0].city},{" "}
+                    {locationData.employees[0].country}
+                  </strong>
+                  <br />
+                  Employees:
+                  <ul>
+                    {locationData.employees.map((employee) => (
+                      <li key={employee.id}>
+                        {employee.firstName} {employee.lastName} (Age:{" "}
+                        {calculateAge(new Date(employee.birthDate))})
+                      </li>
+                    ))}
+                  </ul>
+                </Popup>
+              </Marker>
+            ))
+          )}
+        </MapContainer>
+      )}
     </Box>
   );
 }
