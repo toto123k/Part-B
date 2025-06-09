@@ -41,9 +41,11 @@ export const App = () => {
     setSelectedEmployee(null);
   };
 
+  const LoadingTextSx = { textAlign: "center", mt: 4 };
+
   if (loading) {
     return (
-      <Typography variant="h6" sx={{ textAlign: "center", mt: 4 }}>
+      <Typography variant="h6" sx={LoadingTextSx}>
         Loading team members...
       </Typography>
     );
@@ -51,25 +53,25 @@ export const App = () => {
 
   if (errorMessage) {
     return (
-      <Typography
-        variant="h6"
-        color="error"
-        sx={{ textAlign: "center", mt: 4 }}
-      >
+      <Typography variant="h6" color="error" sx={LoadingTextSx}>
         Oof We Got An Error: {errorMessage}
       </Typography>
     );
   }
 
+  const PageTitleSx = { textAlign: "center", width: "100%" };
+
+  const ErrorMessageSx = { mt: 2 };
+  
   return (
     <>
-      <Typography variant="h1" sx={{ textAlign: "center", width: "100%" }}>
+      <Typography variant="h1" sx={PageTitleSx}>
         Meet The Team
       </Typography>
 
       <Box className="employee-cards-container">
         {employees.length === 0 ? (
-          <Typography variant="body1" sx={{ mt: 2 }}>
+          <Typography variant="body1" sx={ErrorMessageSx}>
             No team members found.
           </Typography>
         ) : (
