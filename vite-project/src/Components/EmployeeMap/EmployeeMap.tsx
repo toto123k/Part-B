@@ -1,10 +1,11 @@
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import type { Employee, GroupedEmployees } from "../../modules/types";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import { geocodeLocation } from "../../services/NinjaApiService";
 import { EmployeeLocationPopup } from "../EmployeeLocationPopup/EmployeeLocationPopup";
+import { toast } from "react-toastify"; // Import toast
 
 interface EmployeeMapProps {
   employees: Employee[];
@@ -40,25 +41,9 @@ const getGeocodedLocation = async (
   city: string,
   country: string
 ): Promise<{ latitude: number; longitude: number } | null> => {
-  let geocodeResult = null;
-
-  console.log(`Geocoding: attempting ${city}, ${country}`);
-  geocodeResult = await geocodeLocation(city, country);
-
-  if (!geocodeResult) {
-    console.warn(
-      `Geocoding: no results for ${city}, ${country}. Trying city only.`
-    );
-    console.log(`Geocoding: attempting ${city} only.`);
-    geocodeResult = await geocodeLocation(city);
-    if (!geocodeResult) {
-      console.warn(`Geocoding: no results for ${city} (attempt 2). Skipping.`);
-    }
-  }
-
-  return geocodeResult
-    ? { latitude: geocodeResult.latitude, longitude: geocodeResult.longitude }
-    : null;
+  return await geocodeLocation(city, country).then(async (geoCodeResult) => {
+    return geoCodeResult ?? (await geocodeLocation(city));
+  });
 };
 
 const useEmployeeLocations = (employees: Employee[]) => {
@@ -68,32 +53,66 @@ const useEmployeeLocations = (employees: Employee[]) => {
   useEffect(() => {
     const processEmployeeLocations = async () => {
       setIsLoading(true);
+      const toastId = toast.loading("Loading employee locations...");
+
       if (employees.length === 0) {
         setGeocodedMapData({});
         setIsLoading(false);
+        toast.update(toastId, {
+          render: "No employees to display on the map.",
+          type: "info",
+          isLoading: false,
+          autoClose: 5000,
+        });
         return;
       }
 
       const groupedEmployees = groupEmployeesByLocation(employees);
       const newGeocodedMapData: GeocodedMapData = {};
+      let hasError = false;
 
       for (const country in groupedEmployees) {
         newGeocodedMapData[country] = {};
         for (const city in groupedEmployees[country]) {
-          const employeesInCity = groupedEmployees[country][city];
-          const locationCoords = await getGeocodedLocation(city, country);
+          const employees = groupedEmployees[country][city];
+          try {
+            const coords = await getGeocodedLocation(city, country);
 
-          if (locationCoords) {
-            newGeocodedMapData[country][city] = {
-              latitude: locationCoords.latitude,
-              longitude: locationCoords.longitude,
-              employees: employeesInCity,
-            };
+            if (coords) {
+              newGeocodedMapData[country][city] = {
+                latitude: coords.latitude,
+                longitude: coords.longitude,
+                employees: employees,
+              };
+            } else {
+              toast.warn(`Could not geocode: ${city}, ${country}`);
+            }
+          } catch (error) {
+            toast.error(`Error geocoding ${city}, ${country}:`, error);
+            hasError = true;
           }
         }
       }
+
       setGeocodedMapData(newGeocodedMapData);
       setIsLoading(false);
+
+      if (hasError) {
+        toast.update(toastId, {
+          render:
+            "Some locations could not be mapped. Check console for details.",
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      } else {
+        toast.update(toastId, {
+          render: "Employee locations loaded successfully!",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      }
     };
 
     processEmployeeLocations();
@@ -134,15 +153,11 @@ const EmployeeMap = ({ employees }: EmployeeMapProps) => {
   };
 
   return (
-    <Box sx={MapContainerSx}>
-      {isLoading ? (
-        <Typography variant="h5" color="text.secondary">
-          Loading team map...
-        </Typography>
-      ) : (
+    !isLoading && (
+      <Box sx={MapContainerSx}>
         <MapContainer
           center={[initialMapCenter.latitude, initialMapCenter.longitude]}
-          zoom={2}
+          zoom={5}
           scrollWheelZoom={true}
           style={{ height: "100%", width: "100%" }}
         >
@@ -163,8 +178,8 @@ const EmployeeMap = ({ employees }: EmployeeMapProps) => {
             ))
           )}
         </MapContainer>
-      )}
-    </Box>
+      </Box>
+    )
   );
 };
 
