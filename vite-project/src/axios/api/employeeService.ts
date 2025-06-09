@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Employee } from "../../modules/types";
+import type { Employee } from "../../modules/Types";
 import axiosInstance from "../axiosInstance";
 
 export const fetchAllEmployees = async (): Promise<Employee[]> => {

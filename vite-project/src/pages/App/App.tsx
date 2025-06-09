@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import EmployeeCard from "../../Components/EmplyoeeCard/EmployeeCard";
 import { fetchAllEmployees } from "../../axios/api/employeeService";
-import type { Employee } from "../../modules/types";
+import type { Employee } from "../../modules/Types";
 import EmployeeModal from "../../Components/EmployeeModal/EmployeeModal";
 import EmployeeMap from "../../Components/EmployeeMap/EmployeeMap";
 

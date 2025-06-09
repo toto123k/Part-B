@@ -1,10 +1,11 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Box, Typography } from "@mui/material";
-import type { Employee, GroupedEmployees } from "../../modules/types";
+import type { Employee, GroupedEmployees } from "../../modules/Types";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState, useMemo } from "react";
 import L from "leaflet";
-import { calculateAge } from "../../modules/employee";
+import { calculateAge } from "../../utils/EmployeeUtils";
+import API_NINJAS_API_KEY from "../../config/NinjaApi";
 
 interface EmployeeMapProps {
   employees: Employee[];
@@ -36,10 +37,6 @@ function groupEmployeesByLocation(employees: Employee[]): GroupedEmployees {
   return grouped;
 }
 
-/**
- * Fetches geocoding data for a given city and country using API-Ninjas.
- * Includes a fallback to search by city only if the initial attempt fails.
- */
 async function fetchGeocodedLocation(
   city: string,
   country: string,
@@ -47,7 +44,6 @@ async function fetchGeocodedLocation(
 ): Promise<{ latitude: number; longitude: number } | null> {
   let geocodeResult = null;
 
-  // Attempt 1: Search with city and country
   try {
     console.log(`Geocoding: attempting ${city}, ${country}`);
     const response = await fetch(
@@ -56,7 +52,6 @@ async function fetchGeocodedLocation(
     );
     const fetchedLocations = await response.json();
     if (fetchedLocations && fetchedLocations.length > 0) {
-      // Taking the nearest location.
       geocodeResult = fetchedLocations[0];
     } else {
       console.warn(
@@ -70,7 +65,6 @@ async function fetchGeocodedLocation(
     );
   }
 
-  // Attempt 2: Fallback to city only if first attempt failed
   if (!geocodeResult) {
     try {
       console.log(`Geocoding: attempting ${city} only.`);
@@ -96,10 +90,6 @@ async function fetchGeocodedLocation(
     : null;
 }
 
-/**
- * Custom hook to manage geocoding of employee locations.
- * Returns a map of geocoded locations with associated employees.
- */
 function useEmployeeLocations(employees: Employee[], apiKey: string) {
   const [geocodedMapData, setGeocodedMapData] = useState<GeocodedMapData>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -162,7 +152,6 @@ function getInitialMapCenter(
 }
 
 function EmployeeMap({ employees }: EmployeeMapProps) {
-  const API_NINJAS_API_KEY = "09CE2n85ib4gM6jB63HDOQ==5Xd52LR3dYw458MQ";
   const { geocodedMapData, isLoading } = useEmployeeLocations(
     employees,
     API_NINJAS_API_KEY
@@ -170,6 +159,12 @@ function EmployeeMap({ employees }: EmployeeMapProps) {
 
   const initialMapCenter: [number, number] =
     getInitialMapCenter(geocodedMapData);
+
+  // Define the geographical bounds for the entire world
+  const WORLD_BOUNDS: L.LatLngBoundsExpression = [
+    [-90, -180], // Southwest coordinates
+    [90, 180], // Northeast coordinates
+  ];
 
   return (
     <Box
@@ -194,10 +189,13 @@ function EmployeeMap({ employees }: EmployeeMapProps) {
           zoom={2}
           scrollWheelZoom={true}
           style={{ height: "100%", width: "100%" }}
+          maxBounds={WORLD_BOUNDS} // Apply maxBounds
+          maxBoundsViscosity={1.0} // Make the bounds solid
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            noWrap={true}
           />
 
           {Object.values(geocodedMapData).map((countryData) =>

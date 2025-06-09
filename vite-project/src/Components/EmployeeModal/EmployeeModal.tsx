@@ -2,24 +2,22 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import type { Employee } from "../../modules/types";
+import type { Employee } from "../../modules/Types";
 import ProfilePicture from "../ProfilePicture/ProfilePicture";
 import popupImage from "../../assets/popup.jpg";
 import { Stack } from "@mui/material";
-import { calculateAge } from "../../modules/employee";
-
-
+import { calculateAge } from "../../utils/EmployeeUtils";
 
 const style = {
   position: "absolute",
   left: "50%",
   transform: "translate(-50%, 0%)",
-  width: "85%", 
+  width: "85%",
   maxWidth: "50rem",
-  height: "auto", 
+  height: "auto",
   maxHeight: "90vh",
-  overflowY: "auto", 
-  overflowX: "hidden", 
+  overflowY: "auto",
+  overflowX: "hidden",
   boxShadow: 24,
   p: 4,
   display: "flex",
