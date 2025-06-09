@@ -145,7 +145,6 @@ const EmployeeMap = ({ employees }: EmployeeMapProps) => {
     height: "50rem",
     width: "100%",
     maxWidth: "100rem",
-    margin: "20px auto",
     overflow: "hidden",
     display: "flex",
     alignItems: "center",
