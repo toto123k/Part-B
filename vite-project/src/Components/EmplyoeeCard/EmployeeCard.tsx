@@ -12,14 +12,15 @@ export const EmployeeCard = ({
   employee,
   onAboutMeClick,
 }: EmployeeCardProps) => {
+  const EmployeeDetailsSx = { color: "gray" };
   return (
     <>
       <div className="card">
         <ProfilePicture imageUrl={employee.imageUrl} />
         <h3>{`${employee.firstName} ${employee.lastName}`}</h3>
-        <Typography sx={{ color: "gray" }}>{employee.title}</Typography>
+        <Typography sx={EmployeeDetailsSx}>{employee.title}</Typography>
         <Typography
-          sx={{ color: "gray" }}
+          sx={EmployeeDetailsSx}
         >{`${employee.city}, ${employee.country}`}</Typography>
         <Button variant="contained" onClick={onAboutMeClick}>
           About Me

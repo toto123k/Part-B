@@ -2,8 +2,9 @@ import { Stack } from "@mui/material";
 import { SocialMediaImageButton } from "../SocialMediaImageButton/SocialMediaImageButton";
 
 export const SocialMediaStack = () => {
+  const SocialMediaStackSx = { pt: 5, pb: 0 };
   return (
-    <Stack direction="row" spacing={3} sx={{ pt: 5, pb: 0 }}>
+    <Stack direction="row" spacing={3} sx={SocialMediaStackSx}>
       <SocialMediaImageButton
         imageUrl="https://cdn2.downdetector.com/static/uploads/c/300/f0d8e/FB-f-Logo__blue_512.png"
         linkToOpen="https://facebook.com"
