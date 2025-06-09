@@ -1,11 +1,10 @@
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import { Box, Typography } from "@mui/material";
-import type { Employee, GroupedEmployees } from "../../modules/Types";
+import type { Employee, GroupedEmployees } from "../../modules/types";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
-import L from "leaflet";
-import { calculateAge } from "../../utils/employeeUtils";
 import { geocodeLocation } from "../../services/NinjaApiService";
+import { EmployeeLocationPopup } from "../EmployeeLocationPopup/EmployeeLocationPopup";
 
 interface EmployeeMapProps {
   employees: Employee[];
@@ -29,8 +28,8 @@ const groupEmployeesByLocation = (employees: Employee[]): GroupedEmployees => {
   employees.forEach((employee) => {
     const { country, city } = employee;
 
-    grouped[country] = grouped[country] || {};
-    grouped[country][city] = grouped[country][city] || [];
+    grouped[country] = grouped[country] ?? {};
+    grouped[country][city] = grouped[country][city] ?? [];
     grouped[country][city].push(employee);
   });
 
@@ -105,7 +104,7 @@ const useEmployeeLocations = (employees: Employee[]) => {
 
 const getInitialMapCenter = (
   geocodedMapData: GeocodedMapData
-): [number, number] => {
+): { latitude: number; longitude: number } => {
   const countries = Object.keys(geocodedMapData);
   if (countries.length > 0) {
     const firstCountry = countries[0];
@@ -113,38 +112,36 @@ const getInitialMapCenter = (
     if (cities.length > 0) {
       const firstCity = cities[0];
       const { latitude, longitude } = geocodedMapData[firstCountry][firstCity];
-      return [latitude, longitude];
+      return { latitude, longitude };
     }
   }
-  return [0, 0];
+  return { latitude: 0, longitude: 0 };
 };
 
 const EmployeeMap = ({ employees }: EmployeeMapProps) => {
   const { geocodedMapData, isLoading } = useEmployeeLocations(employees);
 
-  const initialMapCenter: [number, number] =
-    getInitialMapCenter(geocodedMapData);
+  const initialMapCenter = getInitialMapCenter(geocodedMapData);
+  const MapContainerSx = {
+    height: "50rem",
+    width: "100%",
+    maxWidth: "100rem",
+    margin: "20px auto",
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  };
 
   return (
-    <Box
-      sx={{
-        height: "50rem",
-        width: "100%",
-        maxWidth: "100rem",
-        margin: "20px auto",
-        overflow: "hidden",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <Box sx={MapContainerSx}>
       {isLoading ? (
         <Typography variant="h5" color="text.secondary">
           Loading team map...
         </Typography>
       ) : (
         <MapContainer
-          center={initialMapCenter}
+          center={[initialMapCenter.latitude, initialMapCenter.longitude]}
           zoom={2}
           scrollWheelZoom={true}
           style={{ height: "100%", width: "100%" }}
@@ -161,22 +158,7 @@ const EmployeeMap = ({ employees }: EmployeeMapProps) => {
                 key={`${locationData.latitude}-${locationData.longitude}-${index}`}
                 position={[locationData.latitude, locationData.longitude]}
               >
-                <Popup>
-                  <strong>
-                    {locationData.employees[0].city},{" "}
-                    {locationData.employees[0].country}
-                  </strong>
-                  <br />
-                  Employees:
-                  <ul>
-                    {locationData.employees.map((employee) => (
-                      <li key={employee.id}>
-                        {employee.firstName} {employee.lastName} (Age:{" "}
-                        {calculateAge(new Date(employee.birthDate))})
-                      </li>
-                    ))}
-                  </ul>
-                </Popup>
+                <EmployeeLocationPopup employees={locationData.employees} />
               </Marker>
             ))
           )}
