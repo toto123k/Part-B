@@ -4,7 +4,7 @@ import type { Employee, GroupedEmployees } from "../../modules/Types";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import L from "leaflet";
-import { calculateAge } from "../../utils/EmployeeUtils";
+import { calculateAge } from "../../utils/employeeUtils";
 import { geocodeLocation } from "../../services/NinjaApiService";
 
 interface EmployeeMapProps {

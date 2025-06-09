@@ -6,7 +6,7 @@ import { ProfilePicture } from "../ProfilePicture/ProfilePicture";
 import popupImage from "../../assets/popup.jpg";
 import "./EmployeeModal.css";
 import { SocialMediaStack } from "../SocialMediaStack/SocialMediaStack";
-import { calculateAge } from "../../utils/EmployeeUtils";
+import { calculateAge } from "../../utils/employeeUtils";
 
 const ModalContentStyle = {
   position: "absolute",
@@ -48,9 +48,7 @@ export const EmployeeModal = ({
     <div>
       <Modal open={open} onClose={handleClose}>
         <Box sx={ModalContentStyle}>
-          <ProfilePicture
-            imageUrl={employeeToShow.imageUrl} 
-          />
+          <ProfilePicture imageUrl={employeeToShow.imageUrl} />
 
           <Typography
             className="employee-modal-title"
