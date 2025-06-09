@@ -42,7 +42,7 @@ function App() {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedEmployee(null); // Clear selected employee when closing
+    setSelectedEmployee(null); 
   };
 
   if (loading) {
