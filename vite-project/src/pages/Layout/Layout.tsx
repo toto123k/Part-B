@@ -5,7 +5,7 @@ import { Navbar } from "../../Components/Navbar/Navbar";
 import { Outlet } from "react-router-dom";
 
 export const Layout = () => {
-  const { loading, errorMessage } = useEmployees(); // Use global loading/error
+  const { loading, errorMessage } = useEmployees(); 
 
   const LoadingTextSx = { textAlign: "center", mt: 4 };
 

@@ -5,7 +5,6 @@ import { useEmployees } from "../../contexts/EmployeeContext";
 export const EmployeeMapPage = () => {
   const { employees, loading, errorMessage } = useEmployees();
 
-  // Reusable styles
   const fullScreenCenterStyles = {
     display: "flex",
     flexDirection: "column",

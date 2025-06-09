@@ -1,4 +1,3 @@
-// src/context/EmployeeContext.tsx
 import React, {
   createContext,
   useState,
@@ -6,14 +5,14 @@ import React, {
   useContext,
   type ReactNode,
 } from "react";
-import { fetchAllEmployees } from "../axios/api/employeeService"; // Adjust path as needed
-import type { Employee } from "../modules/types"; // Adjust path as needed
+import { fetchAllEmployees } from "../axios/api/employeeService"; 
+import type { Employee } from "../modules/types"; 
 
 interface EmployeeContextType {
   employees: Employee[];
   loading: boolean;
   errorMessage: string | null;
-  refreshEmployees: () => void; // Optional: A function to re-fetch employees
+  refreshEmployees: () => void; 
 }
 
 const EmployeeContext = createContext<EmployeeContextType | undefined>(

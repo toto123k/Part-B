@@ -3,10 +3,10 @@ import { Box, Typography } from "@mui/material";
 import { EmployeeCard } from "../../Components/EmplyoeeCard/EmployeeCard";
 import type { Employee } from "../../modules/types";
 import { EmployeeModal } from "../../Components/EmployeeModal/EmployeeModal";
-import { useEmployees } from "../../contexts/EmployeeContext"; // Still consume context here
+import { useEmployees } from "../../contexts/EmployeeContext"; 
 
 export const EmployeePage = () => {
-  const { employees } = useEmployees(); // Only need employees here as loading/error handled in Layout
+  const { employees } = useEmployees(); 
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(

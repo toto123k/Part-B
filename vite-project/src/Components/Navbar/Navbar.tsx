@@ -23,17 +23,16 @@ const navLinkContainerSx = {
   gap: 2,
 };
 
+const navbarColoringSx = {
+  backgroundColor: "#ffffff",
+  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+};
+
+const ToolBarDisplaySpacingSx = { justifyContent: "space-between" };
 export const Navbar = () => {
   return (
-    <AppBar
-      position="static"
-      sx={{
-        backgroundColor: "#ffffff",
-        boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-      }}
-      elevation={0}
-    >
-      <Toolbar sx={{ justifyContent: "space-between" }}>
+    <AppBar position="static" sx={navbarColoringSx}>
+      <Toolbar sx={ToolBarDisplaySpacingSx}>
         <Box>
           <Link to="/employees" style={logoLinkSx}>
             {" "}

@@ -5,7 +5,7 @@ import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import { geocodeLocation } from "../../services/NinjaApiService";
 import { EmployeeLocationPopup } from "../EmployeeLocationPopup/EmployeeLocationPopup";
-import { toast } from "react-toastify"; // Import toast
+import { toast } from "react-toastify";
 
 interface EmployeeMapProps {
   employees: Employee[];
