@@ -1,8 +1,15 @@
 .logo {
-  height: 5.5em;
-  width: 5.5em;
-
+  height: 6em;
+  width: 6em;
   will-change: filter;
   transition: filter 300ms;
-  border-radius: 80px;
+  border-radius: 7rem;
+  margin-bottom: 0.5em;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
 }

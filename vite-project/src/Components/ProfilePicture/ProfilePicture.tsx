@@ -4,7 +4,7 @@ interface ProfilePictureProps {
   imageUrl: string;
 }
 
-function ProfilePicture({ imageUrl }: ProfilePictureProps) {
+export const ProfilePicture = ({ imageUrl }: ProfilePictureProps) => {
   return (
     <>
       <div className="logo">
@@ -12,6 +12,4 @@ function ProfilePicture({ imageUrl }: ProfilePictureProps) {
       </div>
     </>
   );
-}
-
-export default ProfilePicture;
+};
