@@ -23,7 +23,7 @@ interface GeocodedMapData {
   };
 }
 
-function groupEmployeesByLocation(employees: Employee[]): GroupedEmployees {
+const groupEmployeesByLocation = (employees: Employee[]): GroupedEmployees => {
   const grouped: GroupedEmployees = {};
 
   employees.forEach((employee) => {
@@ -35,13 +35,13 @@ function groupEmployeesByLocation(employees: Employee[]): GroupedEmployees {
   });
 
   return grouped;
-}
+};
 
-async function fetchGeocodedLocation(
+const fetchGeocodedLocation = async (
   city: string,
   country: string,
   apiKey: string
-): Promise<{ latitude: number; longitude: number } | null> {
+): Promise<{ latitude: number; longitude: number } | null> => {
   let geocodeResult = null;
 
   try {
@@ -88,9 +88,9 @@ async function fetchGeocodedLocation(
   return geocodeResult
     ? { latitude: geocodeResult.latitude, longitude: geocodeResult.longitude }
     : null;
-}
+};
 
-function useEmployeeLocations(employees: Employee[], apiKey: string) {
+const useEmployeeLocations = (employees: Employee[], apiKey: string) => {
   const [geocodedMapData, setGeocodedMapData] = useState<GeocodedMapData>({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -133,11 +133,11 @@ function useEmployeeLocations(employees: Employee[], apiKey: string) {
   }, [employees]);
 
   return { geocodedMapData, isLoading };
-}
+};
 
-function getInitialMapCenter(
+const getInitialMapCenter = (
   geocodedMapData: GeocodedMapData
-): [number, number] {
+): [number, number] => {
   const countries = Object.keys(geocodedMapData);
   if (countries.length > 0) {
     const firstCountry = countries[0];
@@ -149,9 +149,9 @@ function getInitialMapCenter(
     }
   }
   return [0, 0];
-}
+};
 
-function EmployeeMap({ employees }: EmployeeMapProps) {
+const EmployeeMap = ({ employees }: EmployeeMapProps) => {
   const { geocodedMapData, isLoading } = useEmployeeLocations(
     employees,
     API_NINJAS_API_KEY
@@ -227,6 +227,6 @@ function EmployeeMap({ employees }: EmployeeMapProps) {
       )}
     </Box>
   );
-}
+};
 
 export default EmployeeMap;

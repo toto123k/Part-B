@@ -1,23 +1,23 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import type { Employee } from "../../modules/Types";
-import ProfilePicture from "../ProfilePicture/ProfilePicture";
+import type { Employee } from "../../modules/types";
+import { ProfilePicture } from "../ProfilePicture/ProfilePicture";
 import popupImage from "../../assets/popup.jpg";
-import { Stack } from "@mui/material";
+import "./EmployeeModal.css";
+import { SocialMediaStack } from "../SocialMediaStack/SocialMediaStack";
 import { calculateAge } from "../../utils/EmployeeUtils";
 
-const style = {
+const ModalContentStyle = {
   position: "absolute",
   left: "50%",
   transform: "translate(-50%, 0%)",
-  width: "85%", 
+  width: "85%",
   maxWidth: "50rem",
   height: "auto",
   maxHeight: "90vh",
-  overflowY: "auto", 
-  overflowX: "hidden", 
+  overflowY: "auto",
+  overflowX: "hidden",
   boxShadow: 24,
   p: 4,
   display: "flex",
@@ -37,49 +37,40 @@ interface EmployeeModalProps {
   handleClose: () => void;
 }
 
-function EmployeeModal({
+export const EmployeeModal = ({
   employeeToShow,
   open,
   handleClose,
-}: EmployeeModalProps) {
+}: EmployeeModalProps) => {
   const age = calculateAge(new Date(employeeToShow.birthDate));
 
   return (
     <div>
       <Modal open={open} onClose={handleClose}>
-        <Box sx={style}>
+        <Box sx={ModalContentStyle}>
           <ProfilePicture
-            imageUrl={employeeToShow.imageUrl || "assets/jake.jpg"}
+            imageUrl={employeeToShow.imageUrl} 
           />
 
           <Typography
-            id="employee-modal-title"
+            className="employee-modal-title"
             variant="h4"
             component="h2"
-            sx={{ mt: 2 }}
           >
             {employeeToShow.firstName} {employeeToShow.lastName}
           </Typography>
 
-          <Typography variant="h6" sx={{ mt: 1 }}>
+          <Typography variant="h6" className="employee-modal-title">
             {employeeToShow.title}
           </Typography>
 
-          {age !== null && (
-            <Typography variant="h6" sx={{ mt: 1 }}>
-              {age} years old
-            </Typography>
-          )}
+          <Typography variant="h6" className="employee-modal-title">
+            {age} years old
+          </Typography>
 
-          <hr
-            style={{
-              borderTop: "1px solid #eee",
-              width: "100%",
-              margin: "16px 0",
-            }}
-          />
+          <hr className="employee-modal-content " />
 
-          <Typography variant="body1" sx={{ mt: 1 }}>
+          <Typography variant="body1">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent
             vel vehicula nisl. Ut mauris metus, fermentum nec orci nec, sagittis
             laoreet eros. Nam porta luctus mi, sodales aliquam nibh convallis
@@ -94,49 +85,9 @@ function EmployeeModal({
             Nam porttitor mauris a accumsan convallis.
           </Typography>
 
-          <Stack direction="row" spacing={3} sx={{ pt: 5, pb: 0 }}>
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img
-                src={
-                  "https://cdn2.downdetector.com/static/uploads/c/300/f0d8e/FB-f-Logo__blue_512.png"
-                }
-                alt="Facebook"
-                style={{ width: "40px", height: "40px" }}
-              />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/example"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img
-                src={
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/480px-LinkedIn_logo_initials.png"
-                }
-                alt="LinkedIn"
-                style={{ width: "40px", height: "40px" }}
-              />
-            </a>
-            <a
-              href="https://www.twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img
-                src={"https://m.media-amazon.com/images/I/31AGs2bX7mL.png"}
-                alt="Twitter"
-                style={{ width: "40px", height: "40px" }}
-              />
-            </a>
-          </Stack>
+          <SocialMediaStack />
         </Box>
       </Modal>
     </div>
   );
-}
-
-export default EmployeeModal;
+};

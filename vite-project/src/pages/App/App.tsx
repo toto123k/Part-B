@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import EmployeeCard from "../../Components/EmplyoeeCard/EmployeeCard";
+import { EmployeeCard } from "../../Components/EmplyoeeCard/EmployeeCard";
 import { fetchAllEmployees } from "../../axios/api/employeeService";
-import type { Employee } from "../../modules/Types";
-import EmployeeModal from "../../Components/EmployeeModal/EmployeeModal";
+import type { Employee } from "../../modules/types";
+import { EmployeeModal } from "../../Components/EmployeeModal/EmployeeModal";
 import EmployeeMap from "../../Components/EmployeeMap/EmployeeMap";
+import "./App.css";
 
-function App() {
+export const App = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -21,13 +22,9 @@ function App() {
         const data = await fetchAllEmployees();
         setEmployees(data);
       } catch (err: any) {
-        if (err.message) {
-          setErrorMessage(err.message);
-        } else {
-          setErrorMessage(
-            "An unknown error occurred while fetching employees."
-          );
-        }
+        setErrorMessage(
+          err.message ?? "An unknown error occurred while fetching employees."
+        );
       } finally {
         setLoading(false);
       }
@@ -42,7 +39,7 @@ function App() {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedEmployee(null); 
+    setSelectedEmployee(null);
   };
 
   if (loading) {
@@ -67,25 +64,11 @@ function App() {
 
   return (
     <>
-      <Typography
-        variant="h1"
-        sx={{ padding: "0px", textAlign: "center", width: "100%" }}
-      >
+      <Typography variant="h1" sx={{ textAlign: "center", width: "100%" }}>
         Meet The Team
       </Typography>
 
-      <Box
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          p: 1,
-          m: 1,
-          bgcolor: "background.paper",
-          borderRadius: 1,
-          gap: "6rem",
-          justifyContent: "center",
-        }}
-      >
+      <Box className="employee-cards-container">
         {employees.length === 0 ? (
           <Typography variant="body1" sx={{ mt: 2 }}>
             No team members found.
@@ -93,13 +76,7 @@ function App() {
         ) : (
           employees.map((employee) => (
             <EmployeeCard
-              key={employee.id}
-              city={employee.city}
-              country={employee.country}
-              firstName={employee.firstName}
-              lastName={employee.lastName}
-              title={employee.title}
-              imageUrl={employee.imageUrl || "assets/jake.jpg"}
+              employee={employee}
               onAboutMeClick={() => handleOpenModal(employee)}
             />
           ))
@@ -116,6 +93,6 @@ function App() {
       <EmployeeMap employees={employees}></EmployeeMap>
     </>
   );
-}
+};
 
 export default App;
