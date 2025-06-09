@@ -2,10 +2,10 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Box, Typography } from "@mui/material";
 import type { Employee, GroupedEmployees } from "../../modules/Types";
 import "leaflet/dist/leaflet.css";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import L from "leaflet";
 import { calculateAge } from "../../utils/EmployeeUtils";
-import API_NINJAS_API_KEY from "../../config/NinjaApi";
+import { geocodeLocation } from "../../services/NinjaApiService";
 
 interface EmployeeMapProps {
   employees: Employee[];
@@ -37,51 +37,23 @@ const groupEmployeesByLocation = (employees: Employee[]): GroupedEmployees => {
   return grouped;
 };
 
-const fetchGeocodedLocation = async (
+const getGeocodedLocation = async (
   city: string,
-  country: string,
-  apiKey: string
+  country: string
 ): Promise<{ latitude: number; longitude: number } | null> => {
   let geocodeResult = null;
 
-  try {
-    console.log(`Geocoding: attempting ${city}, ${country}`);
-    const response = await fetch(
-      `https://api.api-ninjas.com/v1/geocoding?city=${city}&country=${country}`,
-      { headers: { "X-Api-Key": apiKey } }
-    );
-    const fetchedLocations = await response.json();
-    if (fetchedLocations && fetchedLocations.length > 0) {
-      geocodeResult = fetchedLocations[0];
-    } else {
-      console.warn(
-        `Geocoding: no results for ${city}, ${country}. Trying city only.`
-      );
-    }
-  } catch (error) {
-    console.error(
-      `Geocoding error for ${city}, ${country} (attempt 1):`,
-      error
-    );
-  }
+  console.log(`Geocoding: attempting ${city}, ${country}`);
+  geocodeResult = await geocodeLocation(city, country);
 
   if (!geocodeResult) {
-    try {
-      console.log(`Geocoding: attempting ${city} only.`);
-      const response = await fetch(
-        `https://api.api-ninjas.com/v1/geocoding?city=${city}`,
-        { headers: { "X-Api-Key": apiKey } }
-      );
-      const fetchedLocations = await response.json();
-      if (fetchedLocations && fetchedLocations.length > 0) {
-        geocodeResult = fetchedLocations[0];
-      } else {
-        console.warn(
-          `Geocoding: no results for ${city} (attempt 2). Skipping.`
-        );
-      }
-    } catch (error) {
-      console.error(`Geocoding error for ${city} (attempt 2):`, error);
+    console.warn(
+      `Geocoding: no results for ${city}, ${country}. Trying city only.`
+    );
+    console.log(`Geocoding: attempting ${city} only.`);
+    geocodeResult = await geocodeLocation(city);
+    if (!geocodeResult) {
+      console.warn(`Geocoding: no results for ${city} (attempt 2). Skipping.`);
     }
   }
 
@@ -90,7 +62,7 @@ const fetchGeocodedLocation = async (
     : null;
 };
 
-const useEmployeeLocations = (employees: Employee[], apiKey: string) => {
+const useEmployeeLocations = (employees: Employee[]) => {
   const [geocodedMapData, setGeocodedMapData] = useState<GeocodedMapData>({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -110,11 +82,7 @@ const useEmployeeLocations = (employees: Employee[], apiKey: string) => {
         newGeocodedMapData[country] = {};
         for (const city in groupedEmployees[country]) {
           const employeesInCity = groupedEmployees[country][city];
-          const locationCoords = await fetchGeocodedLocation(
-            city,
-            country,
-            apiKey
-          );
+          const locationCoords = await getGeocodedLocation(city, country);
 
           if (locationCoords) {
             newGeocodedMapData[country][city] = {
@@ -152,19 +120,10 @@ const getInitialMapCenter = (
 };
 
 const EmployeeMap = ({ employees }: EmployeeMapProps) => {
-  const { geocodedMapData, isLoading } = useEmployeeLocations(
-    employees,
-    API_NINJAS_API_KEY
-  );
+  const { geocodedMapData, isLoading } = useEmployeeLocations(employees);
 
   const initialMapCenter: [number, number] =
     getInitialMapCenter(geocodedMapData);
-
-  // Define the geographical bounds for the entire world
-  const WORLD_BOUNDS: L.LatLngBoundsExpression = [
-    [-90, -180], // Southwest coordinates
-    [90, 180], // Northeast coordinates
-  ];
 
   return (
     <Box
@@ -189,8 +148,6 @@ const EmployeeMap = ({ employees }: EmployeeMapProps) => {
           zoom={2}
           scrollWheelZoom={true}
           style={{ height: "100%", width: "100%" }}
-          maxBounds={WORLD_BOUNDS} // Apply maxBounds
-          maxBoundsViscosity={1.0} // Make the bounds solid
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

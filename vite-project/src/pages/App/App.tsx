@@ -74,10 +74,11 @@ export const App = () => {
             No team members found.
           </Typography>
         ) : (
-          employees.map((employee) => (
+          employees.map((employee, employeeIndex) => (
             <EmployeeCard
               employee={employee}
               onAboutMeClick={() => handleOpenModal(employee)}
+              key={employeeIndex}
             />
           ))
         )}
