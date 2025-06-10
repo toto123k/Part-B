@@ -12,9 +12,7 @@ export const App = () => {
         <EmployeeLocationProvider>
           <Routes>
             <Route path="/" element={<Layout />}>
-              <Route index element={<Navigate to="/employees" replace />} />
-
-              <Route path="employees" element={<EmployeePage />} />
+              <Route index path="employees" element={<EmployeePage />} />
 
               <Route path="map" element={<EmployeeMapPage />} />
             </Route>
