@@ -10,7 +10,7 @@ import {
 import type { Employee, GroupedEmployees } from "../modules/types";
 import { geocodeLocation } from "../services/NinjaApiService";
 import { toast } from "react-toastify";
-import { useEmployees } from "./EmployeeContext"; // Import useEmployees from your EmployeeContext
+import { useEmployees } from "./EmployeeContext";
 
 interface GeocodedLocationData {
   latitude: number;
@@ -27,13 +27,13 @@ interface GeocodedMapData {
 interface EmployeeLocationContextType {
   geocodedMapData: GeocodedMapData;
   isLoading: boolean;
-  loadEmployeeLocations: () => Promise<void>; // Function to trigger loading
+  loadEmployeeLocations: () => Promise<void>; 
 }
 
 const EmployeeLocationContext = createContext<EmployeeLocationContextType>({
   geocodedMapData: {},
   isLoading: true,
-  loadEmployeeLocations: async () => {}, // Default no-op function
+  loadEmployeeLocations: async () => {},
 });
 
 export const useEmployeeLocations = () => useContext(EmployeeLocationContext);
@@ -69,12 +69,11 @@ export const EmployeeLocationProvider = ({ children }: Props) => {
   const loadingRef = useRef(false);
 
   const loadEmployeeLocations = useCallback(async () => {
-    // Check the ref directly for up-to-date state
     if (loadingRef.current || isLoaded || employeesLoading) {
       return;
     }
 
-    loadingRef.current = true; // Set immediately
+    loadingRef.current = true;
     setIsLoading(true);
 
     const toastId = toast.loading("Loading employee locations...");

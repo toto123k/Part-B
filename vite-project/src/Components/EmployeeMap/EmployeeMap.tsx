@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import { useEmployeeLocations } from "../../contexts/EmployeeLocationContext";
 import { EmployeeLocationPopup } from "../EmployeeLocationPopup/EmployeeLocationPopup";
 import "leaflet/dist/leaflet.css";
-import { useEffect } from "react"; // Import useEffect
+import { useEffect } from "react";
 
 const getInitialMapCenter = (
   geocodedMapData: ReturnType<typeof useEmployeeLocations>["geocodedMapData"]
