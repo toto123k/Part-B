@@ -1,0 +1,145 @@
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+  useCallback,
+  useRef,
+} from "react";
+import type { Employee, GroupedEmployees } from "../modules/types";
+import { geocodeLocation } from "../services/NinjaApiService";
+import { toast } from "react-toastify";
+import { useEmployees } from "./EmployeeContext"; // Import useEmployees from your EmployeeContext
+
+interface GeocodedLocationData {
+  latitude: number;
+  longitude: number;
+  employees: Employee[];
+}
+
+interface GeocodedMapData {
+  [country: string]: {
+    [city: string]: GeocodedLocationData;
+  };
+}
+
+interface EmployeeLocationContextType {
+  geocodedMapData: GeocodedMapData;
+  isLoading: boolean;
+  loadEmployeeLocations: () => Promise<void>; // Function to trigger loading
+}
+
+const EmployeeLocationContext = createContext<EmployeeLocationContextType>({
+  geocodedMapData: {},
+  isLoading: true,
+  loadEmployeeLocations: async () => {}, // Default no-op function
+});
+
+export const useEmployeeLocations = () => useContext(EmployeeLocationContext);
+
+const groupEmployeesByLocation = (employees: Employee[]): GroupedEmployees => {
+  const grouped: GroupedEmployees = {};
+  employees.forEach(({ country, city, ...rest }) => {
+    if (!grouped[country]) grouped[country] = {};
+    if (!grouped[country][city]) grouped[country][city] = [];
+    grouped[country][city].push({ country, city, ...rest });
+  });
+  return grouped;
+};
+
+const getGeocodedLocation = async (
+  city: string,
+  country: string
+): Promise<{ latitude: number; longitude: number } | null> => {
+  return await geocodeLocation(city, country).then(async (geoCodeResult) => {
+    return geoCodeResult ?? (await geocodeLocation(city));
+  });
+};
+
+interface Props {
+  children: ReactNode;
+}
+
+export const EmployeeLocationProvider = ({ children }: Props) => {
+  const { employees, loading: employeesLoading } = useEmployees();
+  const [geocodedMapData, setGeocodedMapData] = useState<GeocodedMapData>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const loadingRef = useRef(false);
+
+  const loadEmployeeLocations = useCallback(async () => {
+    // Check the ref directly for up-to-date state
+    if (loadingRef.current || isLoaded || employeesLoading) {
+      return;
+    }
+
+    loadingRef.current = true; // Set immediately
+    setIsLoading(true);
+
+    const toastId = toast.loading("Loading employee locations...");
+
+    if (employees.length === 0) {
+      setGeocodedMapData({});
+      setIsLoading(false);
+      setIsLoaded(true);
+      loadingRef.current = false;
+
+      toast.update(toastId, {
+        render: "No employees to display.",
+        type: "info",
+        isLoading: false,
+        autoClose: 5000,
+      });
+      return;
+    }
+
+    const grouped = groupEmployeesByLocation(employees);
+    const data: GeocodedMapData = {};
+    let hasError = false;
+
+    for (const country in grouped) {
+      data[country] = {};
+      for (const city in grouped[country]) {
+        try {
+          const coords = await getGeocodedLocation(city, country);
+          if (coords) {
+            data[country][city] = {
+              latitude: coords.latitude,
+              longitude: coords.longitude,
+              employees: grouped[country][city],
+            };
+          } else {
+            toast.warn(`Could not geocode: ${city}, ${country}`);
+          }
+        } catch (error) {
+          console.error(error);
+          toast.error(`Error geocoding ${city}, ${country}`);
+          hasError = true;
+        }
+      }
+    }
+
+    setGeocodedMapData(data);
+    setIsLoading(false);
+    setIsLoaded(true);
+    loadingRef.current = false;
+
+    toast.update(toastId, {
+      render: hasError
+        ? "Some locations failed to load. See console for details."
+        : "Employee locations loaded!",
+      type: hasError ? "error" : "success",
+      isLoading: false,
+      autoClose: 4000,
+    });
+  }, [employees, employeesLoading, isLoaded]);
+
+  return (
+    <EmployeeLocationContext.Provider
+      value={{ geocodedMapData, isLoading, loadEmployeeLocations }}
+    >
+      {children}
+    </EmployeeLocationContext.Provider>
+  );
+};

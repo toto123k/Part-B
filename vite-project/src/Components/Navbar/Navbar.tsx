@@ -18,7 +18,7 @@ const logoTextSx = {
   },
 };
 
-const navLinkContainerSx = {
+const RoutingButtonsSx = {
   display: "flex",
   gap: 2,
 };
@@ -42,7 +42,7 @@ export const Navbar = () => {
           </Link>
         </Box>
 
-        <Box sx={navLinkContainerSx}>
+        <Box sx={RoutingButtonsSx}>
           <Button color="primary" component={Link} to="/employees">
             Employees
           </Button>

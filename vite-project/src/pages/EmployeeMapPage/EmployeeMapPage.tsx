@@ -5,6 +5,7 @@ import { useEmployees } from "../../contexts/EmployeeContext";
 export const EmployeeMapPage = () => {
   const { employees, loading, errorMessage } = useEmployees();
 
+  // Reusable styles
   const fullScreenCenterStyles = {
     display: "flex",
     flexDirection: "column",
@@ -21,10 +22,12 @@ export const EmployeeMapPage = () => {
     textAlign: "center",
   };
 
+  const ProggressCircleSx = { mb: 2 };
+
   if (loading) {
     return (
       <Box sx={fullScreenCenterStyles}>
-        <CircularProgress sx={{ mb: 2 }} />
+        <CircularProgress sx={ProggressCircleSx} />
         <Typography variant="h6">Loading employee data...</Typography>
       </Box>
     );
@@ -46,7 +49,7 @@ export const EmployeeMapPage = () => {
         <Typography variant="body1" color="error">
           {errorMessage}
         </Typography>
-        <Typography variant="body2" sx={{ mt: 1 }}>
+        <Typography variant="body2">
           Please ensure the Northwind API server is running and accessible.
         </Typography>
       </Box>
@@ -56,7 +59,7 @@ export const EmployeeMapPage = () => {
   return (
     <Box>
       {employees.length > 0 ? (
-        <EmployeeMap employees={employees} />
+        <EmployeeMap />
       ) : (
         <Box sx={noDataMessageStyles}>
           <Typography variant="h6">
