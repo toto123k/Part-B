@@ -23,7 +23,11 @@ export const EmployeePage = () => {
     setSelectedEmployee(null);
   };
 
-  const PageTitleSx = { textAlign: "center", width: "100%" };
+  const PageTitleSx = {
+    textAlign: "center",
+    width: "100%",
+    marginTop: "3.5rem",
+  };
   const ErrorMessageSx = { mt: 2 };
 
   return (

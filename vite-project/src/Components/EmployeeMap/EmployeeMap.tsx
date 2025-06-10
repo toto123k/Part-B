@@ -1,9 +1,15 @@
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  ZoomControl,
+  useMap,
+} from "react-leaflet";
 import { Box } from "@mui/material";
 import { useEmployeeLocations } from "../../contexts/EmployeeLocationContext";
 import { EmployeeLocationPopup } from "../EmployeeLocationPopup/EmployeeLocationPopup";
 import "leaflet/dist/leaflet.css";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react"; // Import useRef
 
 const getInitialMapCenter = (
   geocodedMapData: ReturnType<typeof useEmployeeLocations>["geocodedMapData"]
@@ -31,16 +37,18 @@ const EmployeeMap = () => {
 
   const initialMapCenter = getInitialMapCenter(geocodedMapData);
   const MapContainerSx = {
-    height: "50rem",
-    width: "100%",
-    maxWidth: "100rem",
+    height: "100vh",
+    width: "100vw",
     overflow: "hidden",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
   };
 
-  const mapSizeStyling = { height: "100%", width: "100%" };
+  const mapSizeStyling = {
+    height: "100vh",
+    width: "100vw",
+  };
 
   if (isLoading) {
     return (
@@ -75,12 +83,15 @@ const EmployeeMap = () => {
         zoom={5}
         scrollWheelZoom={true}
         style={mapSizeStyling}
+        key={"employee-map"}
+        zoomControl={false}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           noWrap={true}
         />
+        <ZoomControl position="bottomleft" />
         {Object.values(geocodedMapData).flatMap((countryData) =>
           Object.values(countryData).map((locationData, index) => (
             <Marker

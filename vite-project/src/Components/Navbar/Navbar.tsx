@@ -26,6 +26,9 @@ const RoutingButtonsSx = {
 const navbarColoringSx = {
   backgroundColor: "#ffffff",
   boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+  position: "fixed",
+  top: 0,
+  zIndex: 1000,
 };
 
 const ToolBarDisplaySpacingSx = { justifyContent: "space-between" };
