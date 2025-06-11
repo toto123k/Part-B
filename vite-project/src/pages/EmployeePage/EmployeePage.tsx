@@ -62,5 +62,3 @@ export const EmployeePage = () => {
     </>
   );
 };
-
-export default EmployeePage;

@@ -1,9 +1,8 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useState,
-  ReactNode,
+  type ReactNode,
   useCallback,
   useRef,
 } from "react";
@@ -12,13 +11,13 @@ import { geocodeLocation } from "../services/NinjaApiService";
 import { toast } from "react-toastify";
 import { useEmployees } from "./EmployeeContext";
 
-interface GeocodedLocationData {
+export interface GeocodedLocationData {
   latitude: number;
   longitude: number;
   employees: Employee[];
 }
 
-interface GeocodedMapData {
+export interface GeocodedMapData {
   [country: string]: {
     [city: string]: GeocodedLocationData;
   };
@@ -27,7 +26,7 @@ interface GeocodedMapData {
 interface EmployeeLocationContextType {
   geocodedMapData: GeocodedMapData;
   isLoading: boolean;
-  loadEmployeeLocations: () => Promise<void>; 
+  loadEmployeeLocations: () => Promise<void>;
 }
 
 const EmployeeLocationContext = createContext<EmployeeLocationContextType>({
@@ -64,7 +63,6 @@ interface Props {
 export const EmployeeLocationProvider = ({ children }: Props) => {
   const { employees, loading: employeesLoading } = useEmployees();
   const [geocodedMapData, setGeocodedMapData] = useState<GeocodedMapData>({});
-  const [isLoading, setIsLoading] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const loadingRef = useRef(false);
 
@@ -74,13 +72,11 @@ export const EmployeeLocationProvider = ({ children }: Props) => {
     }
 
     loadingRef.current = true;
-    setIsLoading(true);
 
     const toastId = toast.loading("Loading employee locations...");
 
     if (employees.length === 0) {
       setGeocodedMapData({});
-      setIsLoading(false);
       setIsLoaded(true);
       loadingRef.current = false;
 
@@ -120,7 +116,6 @@ export const EmployeeLocationProvider = ({ children }: Props) => {
     }
 
     setGeocodedMapData(data);
-    setIsLoading(false);
     setIsLoaded(true);
     loadingRef.current = false;
 
@@ -136,7 +131,11 @@ export const EmployeeLocationProvider = ({ children }: Props) => {
 
   return (
     <EmployeeLocationContext.Provider
-      value={{ geocodedMapData, isLoading, loadEmployeeLocations }}
+      value={{
+        geocodedMapData,
+        isLoading: loadingRef.current,
+        loadEmployeeLocations,
+      }}
     >
       {children}
     </EmployeeLocationContext.Provider>

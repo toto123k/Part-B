@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { EmployeeProvider } from "../../contexts/EmployeeContext";
 import { EmployeeLocationProvider } from "../../contexts/EmployeeLocationContext";
-import EmployeePage from "../EmployeePage/EmployeePage";
+import { EmployeePage } from "../EmployeePage/EmployeePage";
 import { Layout } from "../Layout/Layout";
 import { EmployeeMapPage } from "../EmployeeMapPage/EmployeeMapPage";
 

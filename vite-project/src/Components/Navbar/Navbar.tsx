@@ -34,7 +34,7 @@ const navbarColoringSx = {
 const ToolBarDisplaySpacingSx = { justifyContent: "space-between" };
 export const Navbar = () => {
   return (
-    <AppBar position="static" sx={navbarColoringSx}>
+    <AppBar sx={navbarColoringSx}>
       <Toolbar sx={ToolBarDisplaySpacingSx}>
         <Box>
           <Link to="/employees" style={logoLinkSx}>
