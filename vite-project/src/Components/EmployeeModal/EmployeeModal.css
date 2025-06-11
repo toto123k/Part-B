@@ -3,7 +3,7 @@
 }
 
 .employee-modal-content {
-  border-top: 1px solid #eee;
+  border-top: 0.1rem solid #eee;
   width: 100%;
   margin: 2em 0;
 }
