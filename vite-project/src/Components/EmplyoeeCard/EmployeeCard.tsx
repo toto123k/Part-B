@@ -1,42 +1,31 @@
+import type { Employee } from "../../modules/types";
+import { ProfilePicture } from "../ProfilePicture/ProfilePicture";
 import "./EmployeeCard.css";
-import { Box, Typography, Button } from "@mui/material";
+import { Typography, Button } from "@mui/material";
 
 interface EmployeeCardProps {
-  imageUrl: string;
-  firstName: string;
-  lastName: string;
-  title: string;
-  city: string;
-  country: string;
+  employee: Employee;
+  onAboutMeClick: () => void;
 }
 
-function EmployeeCard({
-  imageUrl,
-  firstName,
-  lastName,
-  title,
-  city,
-  country,
-}: EmployeeCardProps) {
+export const EmployeeCard = ({
+  employee,
+  onAboutMeClick,
+}: EmployeeCardProps) => {
+  const EmployeeDetailsSx = { color: "gray" };
   return (
     <>
       <div className="card">
-        <div className="logo">
-          <img
-            src={imageUrl}
-            className="logo"
-            alt={`${firstName} ${lastName}'s profile`}
-          />
-        </div>
-        <h3>{`${firstName} ${lastName}`}</h3>
-        <Typography sx={{ color: "gray" }}>{title}</Typography>
-        <Typography sx={{ color: "gray" }}>{`${city}, ${country}`}</Typography>
-        <Button variant="contained" sx={{ margin: "2rem" }}>
+        <ProfilePicture imageUrl={employee.imageUrl} />
+        <h3>{`${employee.firstName} ${employee.lastName}`}</h3>
+        <Typography sx={EmployeeDetailsSx}>{employee.title}</Typography>
+        <Typography
+          sx={EmployeeDetailsSx}
+        >{`${employee.city}, ${employee.country}`}</Typography>
+        <Button variant="contained" onClick={onAboutMeClick}>
           About Me
         </Button>
       </div>
     </>
   );
-}
-
-export default EmployeeCard;
+};
