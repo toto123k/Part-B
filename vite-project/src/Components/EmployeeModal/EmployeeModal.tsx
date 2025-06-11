@@ -8,8 +8,6 @@ import "./EmployeeModal.css";
 import { SocialMediaStack } from "../SocialMediaStack/SocialMediaStack";
 import { calculateAge } from "../../utils/employeeUtils";
 
-
-
 const ModalContentStyle = {
   position: "absolute",
   left: "50%",
@@ -50,9 +48,7 @@ export const EmployeeModal = ({
     <div>
       <Modal open={open} onClose={handleClose}>
         <Box sx={ModalContentStyle}>
-          <ProfilePicture
-            imageUrl={employeeToShow.imageUrl} // use a fallback if loading the image url image fails.
-          />
+          <ProfilePicture imageUrl={employeeToShow.imageUrl} />
 
           <Typography
             className="employee-modal-title"

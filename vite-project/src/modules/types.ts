@@ -5,6 +5,12 @@ export interface Employee {
   title: string;
   country: string;
   city: string;
-  birthDate: string; 
+  birthDate: string;
   imageUrl: string;
+}
+
+export interface GroupedEmployees {
+  [country: string]: {
+    [city: string]: Employee[];
+  };
 }

@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_BASE_URL: string = "http://localhost:3030/api";
 
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 5000,
   headers: {
@@ -28,4 +28,3 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-export default axiosInstance;
