@@ -1,16 +1,12 @@
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  ZoomControl,
-  useMap,
-} from "react-leaflet";
+import { MapContainer, TileLayer, Marker, ZoomControl } from "react-leaflet";
 import { Box } from "@mui/material";
 import { useEmployeeLocations } from "../../contexts/EmployeeLocationContext";
 import { EmployeeLocationPopup } from "../EmployeeLocationPopup/EmployeeLocationPopup";
 import "leaflet/dist/leaflet.css";
-import { useEffect, useRef } from "react"; // Import useRef
+import { useEffect, useRef } from "react";
+import L from "leaflet"; // Import Leaflet for type definitions
 
+// Helper function to get initial map center (no change needed here)
 const getInitialMapCenter = (
   geocodedMapData: ReturnType<typeof useEmployeeLocations>["geocodedMapData"]
 ): { latitude: number; longitude: number } => {
@@ -30,7 +26,7 @@ const getInitialMapCenter = (
 const EmployeeMap = () => {
   const { geocodedMapData, isLoading, loadEmployeeLocations } =
     useEmployeeLocations();
-
+    
   useEffect(() => {
     loadEmployeeLocations();
   }, []);
@@ -93,14 +89,36 @@ const EmployeeMap = () => {
         />
         <ZoomControl position="bottomleft" />
         {Object.values(geocodedMapData).flatMap((countryData) =>
-          Object.values(countryData).map((locationData, index) => (
-            <Marker
-              key={`${locationData.latitude}-${locationData.longitude}-${index}`}
-              position={[locationData.latitude, locationData.longitude]}
-            >
-              <EmployeeLocationPopup employees={locationData.employees} />
-            </Marker>
-          ))
+          Object.values(countryData).map((locationData) => {
+            const country = locationData.employees[0].country;
+            const city = locationData.employees[0].city;
+
+            const testId = `${country}-${city}`;
+
+            return (
+              <Marker
+                key={testId}
+                position={[locationData.latitude, locationData.longitude]}
+                alt={`${country}, ${city}`}
+                ref={(markerInstance: L.Marker | null) => {
+                  if (markerInstance) {
+                    markerInstance.on("add", () => {
+                      const markerElement = markerInstance.getElement();
+                      if (markerElement) {
+                        markerElement.setAttribute("data-testid", testId);
+                      } else {
+                        console.warn(
+                          `[${testId}] Marker element was null/undefined on 'add' event.`
+                        );
+                      }
+                    });
+                  }
+                }}
+              >
+                <EmployeeLocationPopup employees={locationData.employees} />
+              </Marker>
+            );
+          })
         )}
       </MapContainer>
     </Box>
